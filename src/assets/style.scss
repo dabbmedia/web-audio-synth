@@ -1,0 +1,24 @@
+$font-stack:    Trebuchet MS, Verdana, sans-serif;
+$color-primary: #333233;
+$color-border: #999;
+$color-text-light: #fff;
+$color-link: #a0d3e8;
+$box-radius: 6px;
+$circle-diameter: 36px;
+
+$screen-sm-min: 0px;
+$screen-sm-max: 1080px;
+$screen-md-min: 1081px;
+$screen-md-max: 1279px;
+$screen-lg-min: 1260px;
+$screen-lg-max: 7000px;
+
+@mixin bottom-shadow() {
+    -moz-box-shadow:    0 2px 4px 2px #000;
+    -webkit-box-shadow: 0 2px 4px 2px #000;
+    box-shadow:         0 2px 4px 2px #000;
+}
+
+#app {
+    width: 100%;
+}
