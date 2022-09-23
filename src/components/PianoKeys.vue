@@ -1,10 +1,15 @@
 <script setup>
+    import { ref, onMounted } from 'vue'
     const props = defineProps(['musicalNotes', 'useKeyboard'])
 
-    // var pianoKeysDiv = document.getElementById('piano-keys');
-    // pianoKeysDiv.scrollLeft = (pianoKeysDiv.scrollWidth / 9) * 3;
+    let pianoKeysDiv
     
     defineEmits(['checkedChanged', 'notePressed', 'noteReleased'])
+
+    onMounted(() => {
+        pianoKeysDiv = document.getElementById('piano-keys')
+        pianoKeysDiv.scrollLeft = (pianoKeysDiv.scrollWidth / 9) * 3
+    })
 </script>
 
 <template>
@@ -120,16 +125,16 @@
         #piano-keys {
             .white-key, .black-key {
                 position: relative;
-                width: 50px;
+                display: block;
+                height: 50px;
             }
             .white-key {
-                height: 200px;
+                width: 100%;
             }
 
             .black-key {
-                height: 120px;
-                margin-left: -25px;
-                margin-right: -25px;
+                width: 60%;
+                margin: -25px 0;
             }
         }
     }

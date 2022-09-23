@@ -1,14 +1,17 @@
 # synth-vue
 
-This template should help get you started developing with Vue 3 in Vite.
+Web Audio API Synthesizer built using Vue 3.
 
-## Recommended IDE Setup
+## Description
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+To play the synthesizer 
+    1) the onscreen piano keyboard can be clicked/touched
+    2) the typing keyboard can be used in a limited capacity
+    3) MIDI can be used in Chrome only.
 
-## Customize configuration
+## License
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+MIT License
 
 ## Project Setup
 

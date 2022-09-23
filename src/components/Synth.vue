@@ -179,9 +179,6 @@
         }
     }
     let createMasterChain = function() {
-        nodeControls.pan.audioNode = audioCtx.createStereoPanner();
-        nodeControls.pan.audioNode.pan.setValueAtTime(0, audioCtx.currentTime);
-        
         nodeControls.eqMid.audioNode = audioCtx.createBiquadFilter();
         nodeControls.eqMid.audioNode.type = 'peaking';
         nodeControls.eqMid.audioNode.frequency.value = 440;
@@ -203,9 +200,15 @@
         nodeControls.eqLow.audioNode.connect(nodeControls.eqMid.audioNode);
         nodeControls.eqMid.audioNode.connect(nodeControls.eqHigh.audioNode);
         nodeControls.eqHigh.audioNode.connect(nodeControls.compressor.audioNode);
-        nodeControls.compressor.audioNode.connect(nodeControls.pan.audioNode);
         
-        nodeControls.pan.audioNode.connect(destinationMaster);
+        if (audioCtx.createStereoPanner) {
+            nodeControls.pan.audioNode = audioCtx.createStereoPanner();
+            nodeControls.pan.audioNode.pan.setValueAtTime(0, audioCtx.currentTime);
+            nodeControls.compressor.audioNode.connect(nodeControls.pan.audioNode);
+            nodeControls.pan.audioNode.connect(destinationMaster);
+        } else {
+            nodeControls.compressor.audioNode.connect(destinationMaster);
+        }
     }
     let checkEnabledChanged = function(controlName, isChecked) {
         nodeControls[controlName].enabled = isChecked;
