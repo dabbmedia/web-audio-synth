@@ -1,4 +1,4 @@
-# synth-vue
+# Web Audio Synth
 
 Web Audio API Synthesizer built using Vue 3.
 
@@ -12,6 +12,10 @@ To play the synthesizer
 ## License
 
 MIT License
+
+## Demo Link
+
+[Web Audio Synth at DabbMedia.com](https://www.dabbmedia.com/web-audio/synth/)
 
 ## Project Setup
 
