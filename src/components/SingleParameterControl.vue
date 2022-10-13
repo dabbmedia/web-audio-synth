@@ -17,7 +17,9 @@ let updateChecked = (event) => {
 </script>
 
 <template>
-    <fieldset class="control-column" :id="controlKey">
+    <fieldset 
+        :class="(isVertical) ? 'vertical-range control-column single-parameter-control': 'horizontal-range control-column single-parameter-control'" 
+        :id="controlKey">
         <legend><input v-if="controlEnabledCheckId" type="checkbox" :id="controlEnabledCheckId" @change="updateChecked">{{ title }}</legend>
             
         <input 
@@ -40,3 +42,26 @@ let updateChecked = (event) => {
             @input="updateValue">
     </fieldset>
 </template>
+
+<style lang="scss">
+    .single-parameter-control {
+        &.horizontal-range {
+            height: 50%;
+        }
+        &.vertical-range {
+            height: 86%;
+        }
+        .horizontal-range {
+            width: 90px;
+            height: 32px;
+        }
+        .vertical-range {
+            display: block;
+            width: 32px;
+            height: 90px;
+            -webkit-appearance: slider-vertical;
+            appearance: slider-vertical;
+            writing-mode: bt-lr;
+        }
+    }
+</style>

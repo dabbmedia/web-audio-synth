@@ -26,28 +26,17 @@
         <div 
             v-for="(note, index) in props.musicalNotes" 
             :class="(note.name[1] != 'b') ? 'white-key': 'black-key'" 
-            @mousedown="$emit('notePressed', index)" 
-            @mouseup="$emit('noteReleased', index)" 
-            @touchstart="$emit('notePressed', index)" 
-            @touchend="$emit('noteReleased', index)" 
-            @touchcancel="$emit('noteReleased', index)"
-        >
-            <span class="key-label">
-                {{ note.name }}
-                <!-- - {{ note.frequency }} -->
-            </span>
+            @mousedown="$emit('notePressed', index); $event.preventDefault();" 
+            @mouseup="$emit('noteReleased', index); $event.preventDefault();" 
+            @touchstart="$emit('notePressed', index); $event.preventDefault();" 
+            @touchend="$emit('noteReleased', index); $event.preventDefault();" 
+            @touchcancel="$emit('noteReleased', index); $event.preventDefault();">
+            <span class="key-label">{{ note.name }}</span>
         </div>
     </div>
 </template>
 
 <style lang="scss" scoped>
-    $screen-sm-min: 0px;
-    $screen-sm-max: 1080px;
-    $screen-md-min: 1081px;
-    $screen-md-max: 1279px;
-    $screen-lg-min: 1260px;
-    $screen-lg-max: 7000px;
-
     @mixin bottom-shadow() {
         -moz-box-shadow:    0 2px 4px 2px #000;
         -webkit-box-shadow: 0 2px 4px 2px #000;
@@ -94,6 +83,9 @@
             margin-left: -18px;
             margin-right: -18px;
         }
+        .note-pressed {
+            box-shadow: inset 5em 1em rgba(0, 0, 0, 0.5);
+        }
         
         .key-label {
             position: absolute;
@@ -105,37 +97,42 @@
         }
     }
 
-    /* phone */
-    @media screen and (max-width: $screen-sm-max) {
-        font, p, input[type=text] {
-            font-size: 80px;
-        }
-        
-        input[type=button] {
-            margin: 48px;
-            width: 400px;
-            height: 300px;
-        }
-        
-        input[type=text] {
-            width: 260px;
-            height: 90px;
-        }
-        
-        #piano-keys {
-            .white-key, .black-key {
-                position: relative;
-                display: block;
-                height: 50px;
-            }
-            .white-key {
-                width: 100%;
-            }
-
-            .black-key {
-                width: 60%;
-                margin: -25px 0;
-            }
-        }
+    select {
+        appearance: none;
+        background: none;
     }
+
+    /* phone */
+    // @media screen and (max-width: var(--screen-sm-max)) {
+    //     font, p, input[type=text] {
+    //         font-size: 80px;
+    //     }
+        
+    //     input[type=button] {
+    //         margin: 48px;
+    //         width: 400px;
+    //         height: 300px;
+    //     }
+        
+    //     input[type=text] {
+    //         width: 260px;
+    //         height: 90px;
+    //     }
+        
+    //     #piano-keys {
+    //         .white-key, .black-key {
+    //             position: relative;
+    //             display: block;
+    //             height: 50px;
+    //         }
+    //         .white-key {
+    //             width: 100%;
+    //         }
+
+    //         .black-key {
+    //             width: 60%;
+    //             margin: -25px 0;
+    //         }
+    //     }
+    // }
 </style>

@@ -1,11 +1,11 @@
 <script setup>
     import '../assets/style.scss'
-    import { ref } from 'vue'
-    import { reactive } from 'vue'
+    import { reactive, ref, onRenderTracked, onRenderTriggered } from 'vue'
     import SingleParameterControl from './SingleParameterControl.vue'
     import PianoKeys from './PianoKeys.vue'
 
     const nodeControls = reactive({
+        pan: {title: 'Pan', numberInputId: 'eq-pan-value', rangeInputId: 'eq-pan-range', currentValue: '0.0', audioNode: '', min: '-1.0', max: '1.0', parameter: 'pan', enabled: true, isVertical: false},
         masterGain: {title: 'Volume', numberInputId: 'master-gain-value', rangeInputId: 'master-gain-range', currentValue: '0.8', audioNode: '', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
         // distortion: {title: 'Distortion', controlEnabledCheckId: 'send-effect-distortion-check', numberInputId: 'distortion-value', rangeInputId: 'distortion-range', currentValue: '0.8', audioNode: '', min: '0.0', max: '1.0', parameter: 'gain', enabled: false, isVertical: true},
         delay: {title: 'Delay', controlEnabledCheckId: 'send-effect-delay-check', numberInputId: 'delay-value', rangeInputId: 'delay-range', currentValue: '2.0', audioNode: '', min: '0.0', max: '6.0', parameter: 'delayTime', enabled: false, isVertical: true},
@@ -13,8 +13,7 @@
         eqLow: {title: 'EQ Low', numberInputId: 'eq-low-value', rangeInputId: 'eq-low-range', currentValue: '0.5', audioNode: '', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
         eqMid: {title: 'EQ Mid', numberInputId: 'eq-mid-value', rangeInputId: 'eq-mid-range', currentValue: '0.5', audioNode: '', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
         eqHigh: {title: 'EQ High', numberInputId: 'eq-high-value', rangeInputId: 'eq-high-range', currentValue: '0.5', audioNode: '', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
-        compressor: {title: 'Compressor', numberInputId: 'eq-compressor-value', rangeInputId: 'eq-compressor-range', currentValue: '3', audioNode: '', min: '1', max: '20', parameter: 'ratio', enabled: true, isVertical: false},
-        pan: {title: 'Pan', numberInputId: 'eq-pan-value', rangeInputId: 'eq-pan-range', currentValue: '0.0', audioNode: '', min: '-1.0', max: '1.0', parameter: 'pan', enabled: true, isVertical: false},
+        compressor: {title: 'Compressor', numberInputId: 'eq-compressor-value', rangeInputId: 'eq-compressor-range', currentValue: '3', audioNode: '', min: '1', max: '20', parameter: 'ratio', enabled: true, isVertical: true},
     })
 
     const pianoKeys = ref({
@@ -139,11 +138,6 @@
     nodeControls.masterGain.audioNode = audioCtx.createGain();
     nodeControls.masterGain.audioNode.gain.value = parseFloat(nodeControls.masterGain.currentValue);
 
-    nodeControls.eqLow.audioNode = audioCtx.createBiquadFilter();
-    nodeControls.eqLow.audioNode.type = 'lowshelf';
-    nodeControls.eqLow.audioNode.frequency.value = 300;
-    nodeControls.eqLow.audioNode.gain.value = 0;
-    
     let destinationMaster = audioCtx.destination;
     let oscillatorType = 0;
     let oscillators = [];
@@ -160,7 +154,7 @@
         // oscSend = audioCtx.createConvolver();
 
         // delay
-        if (nodeControls.delay.enabled && !nodeControls.delay.audioNode) {
+        if (nodeControls.delay.enabled !== false && !nodeControls.delay.audioNode) {
             nodeControls.delay.audioNode = audioCtx.createDelay(nodeControls.delay.max);
             nodeControls.delay.audioNode.delayTime.setValueAtTime(nodeControls.delay.currentValue, audioCtx.currentTime);
             
@@ -179,6 +173,11 @@
         }
     }
     let createMasterChain = function() {
+        nodeControls.eqLow.audioNode = audioCtx.createBiquadFilter();
+        nodeControls.eqLow.audioNode.type = 'lowshelf';
+        nodeControls.eqLow.audioNode.frequency.value = 300;
+        nodeControls.eqLow.audioNode.gain.value = 0;
+
         nodeControls.eqMid.audioNode = audioCtx.createBiquadFilter();
         nodeControls.eqMid.audioNode.type = 'peaking';
         nodeControls.eqMid.audioNode.frequency.value = 440;
@@ -481,9 +480,16 @@
             toggleControl.style.display = 'none';
         }
     }
+    // onRenderTracked((event) => {
+    //     debugger
+    // })
+
+    // onRenderTriggered((event) => {
+    //     debugger
+    // })
     
-    createSendChain();
     createMasterChain();
+    createSendChain();
 
     if (typeof navigator.requestMIDIAccess !== "undefined") {
         navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure)
@@ -500,7 +506,7 @@
         </span>
     </h2>
     <div id="controls-container">
-        <fieldset class="control-column">
+        <fieldset class="control-column dropdown-control">
             <legend>Wave Type</legend>
             <select id="osc-type">
                 <option value="sine" selected>sine</option>
@@ -540,41 +546,35 @@
 <style lang="scss">
     #controls-container {
         display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        height: 240px;
         
         .control-column {
-            display: inline-block;
+            flex: none;
             margin: 8px;
             text-align: center;
-            border: 0;
-        }
-        .control-column legend {
-            text-align: center;
-            margin: 0 auto;
-            white-space: nowrap;
-        }
-        .control-column input[type=checkbox] {
-            margin: 0 4px;
-        }
-        .control-column input[type=number] {
-            display: block;
-            width: 72px;
-            margin: 8px auto;
-        }
-        .control-column input[type=range] {
-            display: block;
-            margin: 8px auto;
-        }
-        .horizontal-range {
-            width: 90px;
-            height: 32px;
-        }
-        .vertical-range {
-            display: block;
-            width: 32px;
-            height: 90px;
-            -webkit-appearance: slider-vertical;
-            appearance: slider-vertical;
-            writing-mode: bt-lr;
+            border: 1px solid rgb(64, 64, 64);
+            border-radius: 0.5rem;
+
+            &.dropdown-control {
+                height: 29%;
+            }
+            legend {
+                text-align: center;
+                margin: 0 auto;
+                white-space: nowrap;
+            }
+            input[type=checkbox] {
+                margin: 0 4px;
+            }
+            input[type=number] {
+                margin: 0 auto;
+            }
+            input[type=range] {
+                display: block;
+                margin: 8px auto;
+            }
         }
     }
 </style>
