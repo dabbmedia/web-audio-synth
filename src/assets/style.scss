@@ -110,6 +110,10 @@ a,
   
     #app {
       padding: 0 2rem;
+
+      #controls-container {
+        display: flex;
+      }
     }
 }
 

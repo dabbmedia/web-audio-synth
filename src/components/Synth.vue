@@ -511,15 +511,11 @@
     } else {
         console.log('MIDI not available');
     }
-
-    if (iOS) {
-        console.log('Please make sure the device (phone/tablet) mute button is off.');
-    }
 </script>
 
 <template>
     <h2 id="controls-header">
-        Effects
+        Synth Controls
         <span id="toggle-controls" @click="toggleControls">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16"><path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
         </span>
@@ -552,6 +548,8 @@
             @check-enabled-changed="checkEnabledChanged" 
         />
     </div>
+
+    <div id="ios-mute-warning" v-if="iOS()">Confirm device mute button is off.</div>
     
     <PianoKeys 
         :musical-notes="musicalNotes" 
@@ -563,12 +561,16 @@
 </template>
 
 <style lang="scss">
+    @media (min-width: 1024px) {
+        #controls-container {
+            height: 200px;
+        }
+    }
     #controls-container {
-        display: flex;
+        display: none;
         flex-wrap: wrap;
         flex-direction: column;
         align-items: space-between;
-        height: 200px;
         
         .control-column {
             // flex: none;

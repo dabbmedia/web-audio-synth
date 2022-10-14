@@ -4,7 +4,7 @@ import Synth from './components/Synth.vue'
 
 <template>
   <header>
-    <h1 class="wrapper">Web Audio API Synthesizer</h1>
+    <h1 class="wrapper">Web Audio API Synth</h1>
   </header>
 
   <main>

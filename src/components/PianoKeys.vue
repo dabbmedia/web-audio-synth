@@ -19,8 +19,9 @@
             id="use-keyboard" 
             :checked="props.useKeyboard" 
             @change="$emit('checkedChanged', props.useKeyboard)">
-        Use Keyboard as Controller - A, S, D, F, G, H, J, K, L, ;
+        Use Keyboard as Controller
     </div>
+    <div>(A, S, D, F, G, H, J, K, L, ;)</div>
 
     <div id="piano-keys">
         <div 
@@ -28,6 +29,8 @@
             :class="(note.name[1] != 'b') ? 'white-key': 'black-key'" 
             @mousedown="$emit('notePressed', index); $event.preventDefault(); $event.target.classList.add('note-pressed');" 
             @mouseup="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');" 
+            @mouseleave="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');" 
+            @mouseout="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');" 
             @touchstart="$emit('notePressed', index); $event.preventDefault(); $event.target.classList.add('note-pressed');" 
             @touchend="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');" 
             @touchcancel="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');"
