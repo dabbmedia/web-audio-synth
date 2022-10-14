@@ -144,6 +144,7 @@
     let midi = null;
     let sustainPedalPressed = false;
 
+    // https://stackoverflow.com/a/9039885/2386108
     let iOS = function() {
         return [
             'iPad Simulator',
