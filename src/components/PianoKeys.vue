@@ -26,11 +26,12 @@
         <div 
             v-for="(note, index) in props.musicalNotes" 
             :class="(note.name[1] != 'b') ? 'white-key': 'black-key'" 
-            @mousedown="$emit('notePressed', index); $event.preventDefault();" 
-            @mouseup="$emit('noteReleased', index); $event.preventDefault();" 
-            @touchstart="$emit('notePressed', index); $event.preventDefault();" 
-            @touchend="$emit('noteReleased', index); $event.preventDefault();" 
-            @touchcancel="$emit('noteReleased', index); $event.preventDefault();">
+            @mousedown="$emit('notePressed', index); $event.preventDefault(); $event.target.classList.add('note-pressed');" 
+            @mouseup="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');" 
+            @touchstart="$emit('notePressed', index); $event.preventDefault(); $event.target.classList.add('note-pressed');" 
+            @touchend="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');" 
+            @touchcancel="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');"
+        >
             <span class="key-label">{{ note.name }}</span>
         </div>
     </div>
@@ -84,7 +85,8 @@
             margin-right: -18px;
         }
         .note-pressed {
-            box-shadow: inset 5em 1em rgba(0, 0, 0, 0.5);
+            box-shadow: inset 2rem 1rem rgba(128, 128, 128, 0.7);
+            // background-color: red;
         }
         
         .key-label {

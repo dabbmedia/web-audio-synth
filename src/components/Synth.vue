@@ -144,6 +144,19 @@
     let midi = null;
     let sustainPedalPressed = false;
 
+    let iOS = function() {
+        return [
+            'iPad Simulator',
+            'iPhone Simulator',
+            'iPod Simulator',
+            'iPad',
+            'iPhone',
+            'iPod'
+        ].includes(navigator.platform)
+        // iPad on iOS 13 detection
+        || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+    }
+
     let createSendChain = function() {
         // distortion
         // oscSend = audioCtx.createWaveShaper();
@@ -254,14 +267,15 @@
 
         oscillators[noteNum] = [oscillator, gainNode];
     }
-    let noteStart = function(noteNum, start) {
-        var note = musicalNotes[noteNum];
+    let noteStart = function(noteNum) {
+        let start = 0;
         
         createFrequencyOscillator(noteNum, start);
 
         oscillators[noteNum][0].start(start);
-        // console.log('osc started: ' + noteNum);
+
         // printAudioCtx(false);
+
         oscillators[noteNum][0].onended = function() {
             if (oscillators[noteNum]) {
                 oscillators[noteNum][1].disconnect();
@@ -496,6 +510,10 @@
     } else {
         console.log('MIDI not available');
     }
+
+    if (iOS) {
+        console.log('Please make sure the device (phone/tablet) mute button is off.');
+    }
 </script>
 
 <template>
@@ -548,17 +566,18 @@
         display: flex;
         flex-wrap: wrap;
         flex-direction: column;
-        height: 240px;
+        align-items: space-between;
+        height: 200px;
         
         .control-column {
-            flex: none;
-            margin: 8px;
+            // flex: none;
+            margin: 4px 16px;
             text-align: center;
             border: 1px solid rgb(64, 64, 64);
             border-radius: 0.5rem;
 
             &.dropdown-control {
-                height: 29%;
+                padding-bottom: 8px;
             }
             legend {
                 text-align: center;

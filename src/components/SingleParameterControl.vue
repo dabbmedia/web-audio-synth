@@ -46,10 +46,10 @@ let updateChecked = (event) => {
 <style lang="scss">
     .single-parameter-control {
         &.horizontal-range {
-            height: 50%;
+            padding-bottom: 0;
         }
         &.vertical-range {
-            height: 86%;
+            padding-bottom: 8px;
         }
         .horizontal-range {
             width: 90px;
