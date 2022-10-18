@@ -4,12 +4,26 @@
 
     let pianoKeysDiv
     
-    defineEmits(['checkedChanged', 'notePressed', 'noteReleased'])
+    const emit = defineEmits(['checkedChanged', 'notePressed', 'noteReleased'])
 
     onMounted(() => {
         pianoKeysDiv = document.getElementById('piano-keys')
         pianoKeysDiv.scrollLeft = (pianoKeysDiv.scrollWidth / 9) * 3
     })
+
+    const emitPressed = (e, index) => {
+        console.log('piano key pressed');
+        e.preventDefault();
+        emit('notePressed', index);
+        e.target.classList.add('note-pressed');
+    }
+
+    const emitReleased = (e, index) => {
+        console.log('piano key released');
+        e.preventDefault();
+        emit('noteReleased', index);
+        e.target.classList.remove('note-pressed');
+    }
 </script>
 
 <template>
@@ -24,16 +38,20 @@
     <div>(A, S, D, F, G, H, J, K, L, ;)</div>
 
     <div id="piano-keys">
+        <!-- 
+            these events caused a double note press,
+            but may be needed for "sliding" off of a piano key
+            @mouseout="emitReleased($event, index)" 
+            @mouseleave="emitReleased($event, index)" 
+        -->
         <div 
             v-for="(note, index) in props.musicalNotes" 
             :class="(note.name[1] != 'b') ? 'white-key': 'black-key'" 
-            @mousedown="$emit('notePressed', index); $event.preventDefault(); $event.target.classList.add('note-pressed');" 
-            @mouseup="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');" 
-            @mouseleave="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');" 
-            @mouseout="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');" 
-            @touchstart="$emit('notePressed', index); $event.preventDefault(); $event.target.classList.add('note-pressed');" 
-            @touchend="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');" 
-            @touchcancel="$emit('noteReleased', index); $event.preventDefault(); $event.target.classList.remove('note-pressed');"
+            @mousedown="emitPressed($event, index)" 
+            @mouseup="emitReleased($event, index)"  
+            @touchstart="emitPressed($event, index)" 
+            @touchend="emitReleased($event, index)" 
+            @touchcancel="emitReleased($event, index)" 
         >
             <span class="key-label">{{ note.name }}</span>
         </div>

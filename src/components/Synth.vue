@@ -5,15 +5,15 @@
     import PianoKeys from './PianoKeys.vue'
 
     const nodeControls = reactive({
-        pan: {title: 'Pan', numberInputId: 'eq-pan-value', rangeInputId: 'eq-pan-range', currentValue: '0.0', audioNode: '', min: '-1.0', max: '1.0', parameter: 'pan', enabled: true, isVertical: false},
-        masterGain: {title: 'Volume', numberInputId: 'master-gain-value', rangeInputId: 'master-gain-range', currentValue: '0.8', audioNode: '', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
-        // distortion: {title: 'Distortion', controlEnabledCheckId: 'send-effect-distortion-check', numberInputId: 'distortion-value', rangeInputId: 'distortion-range', currentValue: '0.8', audioNode: '', min: '0.0', max: '1.0', parameter: 'gain', enabled: false, isVertical: true},
-        delay: {title: 'Delay', controlEnabledCheckId: 'send-effect-delay-check', numberInputId: 'delay-value', rangeInputId: 'delay-range', currentValue: '2.0', audioNode: '', min: '0.0', max: '6.0', parameter: 'delayTime', enabled: false, isVertical: true},
-        // reverb: {title: 'Reverb', controlEnabledCheckId: 'send-effect-reverb-check', numberInputId: 'reverb-value', rangeInputId: 'reverb-range', currentValue: '0.8', audioNode: '', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
-        eqLow: {title: 'EQ Low', numberInputId: 'eq-low-value', rangeInputId: 'eq-low-range', currentValue: '0.5', audioNode: '', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
-        eqMid: {title: 'EQ Mid', numberInputId: 'eq-mid-value', rangeInputId: 'eq-mid-range', currentValue: '0.5', audioNode: '', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
-        eqHigh: {title: 'EQ High', numberInputId: 'eq-high-value', rangeInputId: 'eq-high-range', currentValue: '0.5', audioNode: '', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
-        compressor: {title: 'Compressor', numberInputId: 'eq-compressor-value', rangeInputId: 'eq-compressor-range', currentValue: '3', audioNode: '', min: '1', max: '20', parameter: 'ratio', enabled: true, isVertical: true},
+        pan: {title: 'Pan', numberInputId: 'eq-pan-value', rangeInputId: 'eq-pan-range', currentValue: '0.0', audioNode: '', step: '0.1', min: '-1.0', max: '1.0', parameter: 'pan', enabled: true, isVertical: false},
+        masterGain: {title: 'Volume', numberInputId: 'master-gain-value', rangeInputId: 'master-gain-range', currentValue: '0.8', audioNode: '', step: '0.1', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
+        // distortion: {title: 'Distortion', controlEnabledCheckId: 'send-effect-distortion-check', numberInputId: 'distortion-value', rangeInputId: 'distortion-range', currentValue: '0.8', audioNode: '', step: '0.1', min: '0.0', max: '1.0', parameter: 'gain', enabled: false, isVertical: true},
+        delay: {title: 'Delay', controlEnabledCheckId: 'send-effect-delay-check', numberInputId: 'delay-value', rangeInputId: 'delay-range', currentValue: '2.0', audioNode: '', step: '0.1', min: '0.0', max: '6.0', parameter: 'delayTime', enabled: false, isVertical: true},
+        // reverb: {title: 'Reverb', controlEnabledCheckId: 'send-effect-reverb-check', numberInputId: 'reverb-value', rangeInputId: 'reverb-range', currentValue: '0.8', audioNode: '', step: '0.1', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
+        eqLow: {title: 'EQ Low', numberInputId: 'eq-low-value', rangeInputId: 'eq-low-range', currentValue: '0.5', audioNode: '', step: '0.1', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
+        eqMid: {title: 'EQ Mid', numberInputId: 'eq-mid-value', rangeInputId: 'eq-mid-range', currentValue: '0.5', audioNode: '', step: '0.1', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
+        eqHigh: {title: 'EQ High', numberInputId: 'eq-high-value', rangeInputId: 'eq-high-range', currentValue: '0.5', audioNode: '', step: '0.1', min: '0.0', max: '1.0', parameter: 'gain', enabled: true, isVertical: true},
+        compressor: {title: 'Compressor', numberInputId: 'eq-compressor-value', rangeInputId: 'eq-compressor-range', currentValue: '3.0', audioNode: '', step: '1', min: '1', max: '20', parameter: 'ratio', enabled: true, isVertical: true},
     })
 
     const pianoKeys = ref({
@@ -157,7 +157,6 @@
         // iPad on iOS 13 detection
         || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
     }
-
     let createSendChain = function() {
         // distortion
         // oscSend = audioCtx.createWaveShaper();
@@ -173,7 +172,7 @@
             nodeControls.delay.audioNode.delayTime.setValueAtTime(nodeControls.delay.currentValue, audioCtx.currentTime);
             
             const delayGainNode = audioCtx.createGain();
-            delayGainNode.gain.value = 0.1;
+            delayGainNode.gain.value = (parseFloat(nodeControls.masterGain.currentValue) * 0.75).toFixed(1);
 
             nodeControls.masterGain.audioNode.connect(delayGainNode);
             delayGainNode.connect(nodeControls.delay.audioNode);
@@ -229,15 +228,11 @@
     }
     let controlValueChanged = function(controlName, newValue) {
         let control = nodeControls[controlName];
-        if (control) {
-            control.currentValue = newValue;
-            if (control.audioNode[control.parameter]) {
-                control.currentValue = newValue;
-                control.audioNode[control.parameter].setValueAtTime(newValue, audioCtx.currentTime);
-            }
+        if (control && control.audioNode[control.parameter]) {
+            control.currentValue = parseFloat(newValue).toFixed(1);
+            control.audioNode[control.parameter].setValueAtTime(control.currentValue, audioCtx.currentTime);
         } else {
             console.log(`Control ${controlName} not found, value could not be updated.`);
-            return true;
         }
     }
     let createFrequencyOscillator = function(noteNum, start) {
@@ -247,18 +242,6 @@
         oscillatorType = document.getElementById('osc-type').options[document.getElementById('osc-type').selectedIndex].value;
         oscillator.type = oscillatorType;
 
-        // use for custom oscillator wave types
-        // const real = new Float32Array(2);
-        // const imag = new Float32Array(2);
-        
-        // real[0] = 0;
-        // imag[0] = 0;
-        // real[1] = 1;
-        // imag[1] = 0;
-        
-        // const wave = audioCtx.createPeriodicWave(real, imag, {disableNormalization: true});
-        // oscillator.setPeriodicWave(wave);
-
         oscillator.frequency.value = parseFloat(note.frequency); // value in hertz
         
         var gainNode = audioCtx.createGain();
@@ -267,6 +250,19 @@
         oscillator.connect(gainNode).connect(nodeControls.masterGain.audioNode);
 
         oscillators[noteNum] = [oscillator, gainNode];
+    }
+    let createOscillatorCustomWaveType = function() {
+        // use for custom oscillator wave types
+        const real = new Float32Array(2);
+        const imag = new Float32Array(2);
+        
+        real[0] = 0;
+        imag[0] = 0;
+        real[1] = 1;
+        imag[1] = 0;
+        
+        const wave = audioCtx.createPeriodicWave(real, imag, {disableNormalization: true});
+        oscillator.setPeriodicWave(wave);
     }
     let noteStart = function(noteNum) {
         let start = 0;
@@ -495,12 +491,17 @@
             toggleControl.style.display = 'none';
         }
     }
+
+    let printState = function() {
+        console.log('synth state: ' + JSON.stringify(nodeControls));
+    }
     // onRenderTracked((event) => {
     //     debugger
     // })
 
     // onRenderTriggered((event) => {
-    //     debugger
+    //     // debugger
+    //     printState();
     // })
     
     createMasterChain();
@@ -535,17 +536,11 @@
         <SingleParameterControl 
             v-for="(control, key) in nodeControls" 
             :control-key="key"
-            :title="control.title" 
-            :controlEnabledCheckId="control.controlEnabledCheckId" 
-            :numberInputId="control.numberInputId" 
-            :rangeInputId="control.rangeInputId" 
-            :defaultValue="control.currentValue" 
-            :value="control.value" 
-            :min="control.min" 
-            :max="control.max" 
-            :isVertical="control.isVertical" 
+            :control-data="control"
             @control-value-changed="controlValueChanged" 
             @check-enabled-changed="checkEnabledChanged" 
+            @increase-value="(controlKey) => controlValueChanged(controlKey, (parseFloat(nodeControls[controlKey].currentValue) + parseFloat(nodeControls[controlKey].step)).toFixed(1))" 
+            @decrease-value="(controlKey) => controlValueChanged(controlKey, (parseFloat(nodeControls[controlKey].currentValue) - parseFloat(nodeControls[controlKey].step)).toFixed(1))" 
         />
     </div>
 
@@ -567,13 +562,15 @@
         }
     }
     #controls-container {
-        display: none;
+        display: flex;
         flex-wrap: wrap;
         flex-direction: column;
         align-items: space-between;
         
         .control-column {
-            // flex: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin: 4px 16px;
             text-align: center;
             border: 1px solid rgb(64, 64, 64);
