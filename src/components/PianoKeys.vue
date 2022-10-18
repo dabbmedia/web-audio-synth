@@ -12,14 +12,12 @@
     })
 
     const emitPressed = (e, index) => {
-        console.log('piano key pressed');
         e.preventDefault();
         emit('notePressed', index);
         e.target.classList.add('note-pressed');
     }
 
     const emitReleased = (e, index) => {
-        console.log('piano key released');
         e.preventDefault();
         emit('noteReleased', index);
         e.target.classList.remove('note-pressed');
